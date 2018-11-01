@@ -1,7 +1,7 @@
 (function(){
 	//var socket = io.connect('http://avalon-test.herokuapp.com/');
 	///var socket = io.connect('http://my-avalon.herokuapp.com/');
-	//var socket = io.connect('localhost:8080');
+	//var socket = io.connect('localhost:8081');
 	var fs = require('fs');
 	fs.writeFile("notice", "Hello!\noutput file\nby Node.js", function(err) {
 	    if(err) {
