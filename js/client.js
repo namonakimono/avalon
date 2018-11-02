@@ -1,7 +1,7 @@
 (function(){
 	//var socket = io.connect('http://avalon-test.herokuapp.com/');
 	// var socket = io.connect('http://my-avalon.herokuapp.com/');
-	var socket = io.connect('localhost:8081');
+	var socket = io.connect('http://avalon.yozora.moe');
 	var gb = null 
 	var roomNumber = null ;
 	var role = null ;
