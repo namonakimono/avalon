@@ -16,41 +16,42 @@
 	<p>Forked from https://github.com/jeno5980515/avalon <br>
        for lab's entertainment only...</p>
 	<div id="loginPage" class="page">
-		可選擇顯示名稱為名字或圖片。<br>
-		<input placeholder="輸入你的暱稱" id="nameInput"></input>
-		<button id="loginButton">確認</button><br>
-		輸入圖片網址。<br>
-		<input placeholder="輸入圖片網址" id="imageInput"></input>
-		<button id="loginImageButton">確認</button><br>
+		You can use a nick name <b>OR</b> an image to mark your identity.<br>
+		<input placeholder="Nick name" id="nameInput"></input>
+		<button id="loginButton">Next</button><br>
+		URL of an image<br>
+		<input placeholder="URL of an image" id="imageInput"></input>
+		<button id="loginImageButton">Next</button><br>
 		<!--
 		上傳一張圖片。<br>
 		<input type="file" id="uploadImage"></input><br>
 		-->
-		<div style="color:red;">若遊戲斷線，可直接按回覆紀錄回到房間！</div>
-		<button id="recoverButton">回復紀錄</button><br><br>
+		<br>
+		<div style="color:red;">Click the following buttion to join the last lost game.</div>
+		<button id="recoverButton">Send me right there.</button><br><br>
 		<a href="tutorial.html" target="_blank" style="color:blue;">遊戲系統介紹！</a>
 		<div id="noticeDiv">
 		</div>
 	</div>	
 	<div id="roomPage" class="page">
-		創建房間
+		Create a room
 		<div class="enterRoomDiv">
-			密碼<input placeholder="若無則留空" id="passwordCreate"></input>
-			<button id="createButton">創建房間</button>
+			Password<input placeholder="optional" id="passwordCreate"></input>
+			<button id="createButton">Create a room</button>
 		</div>
-		加入房間
+		Join
 		<div class="enterRoomDiv">
-			房號<input placeholder="輸入房號" id="roomInput"></input>
-			密碼<input placeholder="若無則留空" id="passwordJoin"></input>
-			<button id="joinButton">進入房間</button>
+			Room number<input placeholder="room number" id="roomInput"></input>
+			Password<input placeholder="optional" id="passwordJoin"></input>
+			<button id="joinButton">Join</button>
 		</div>
-		房間大廳 <input type="checkbox" id="roomPlayingDisplayBox">只顯示可進入的房間<br>
+		Game hall <input type="checkbox" id="roomPlayingDisplayBox">Only rooms that are available are shown.<br>
 		<div class="enterRoomDiv" id="roomDisplayDiv">
 		</div>
 	</div>
 	<div id="gamePage" class="page" >
 		<header id="numberDiv" class="w3-container w3-teal"></header>
-		<button id="restartButton">中斷遊戲</button>
+		<button id="restartButton">Pause the game</button>
 		<div id="restartArea"></div>
 		<div id="roleDiv"></div>
 		<div id="boardDiv"></div>
@@ -69,8 +70,8 @@
 			<div class="w3-container w3-half">
 				<div id="textArea" class="w3-container  w3-border"></div>
 				<div id="textInputArea" class="w3-container">
-					<input placeholder="輸入你的訊息" id="textInput"></input>
-					<button id="textButton">送出</button>
+					<input placeholder="Text..." id="textInput"></input>
+					<button id="textButton">Send</button>
 				</div>
 			</div>
 		</footer>

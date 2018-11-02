@@ -15,12 +15,12 @@
 	]
 
 	var bgamount = [0,1,2,3,4,
-		["梅林","好人","好人","刺客","壞人"],
-		["梅林","好人","好人","好人","刺客","壞人"],
-		["梅林","好人","好人","好人","刺客","壞人","壞人"],
-		["梅林","好人","好人","好人","好人","刺客","壞人","壞人"],
-		["梅林","好人","好人","好人","好人","好人","刺客","壞人","壞人"],
-		["梅林","好人","好人","好人","好人","好人","刺客","壞人","壞人","壞人"]
+		["Merlin","Justice","Justice","Assassin","Evil"],
+		["Merlin","Justice","Justice","Justice","Assassin","Evil"],
+		["Merlin","Justice","Justice","Justice","Assassin","Evil","Evil"],
+		["Merlin","Justice","Justice","Justice","Justice","Assassin","Evil","Evil"],
+		["Merlin","Justice","Justice","Justice","Justice","Justice","Assassin","Evil","Evil"],
+		["Merlin","Justice","Justice","Justice","Justice","Justice","Assassin","Evil","Evil","Evil"]
 	]
 
 	var bodyParser = require('body-parser')
@@ -158,7 +158,7 @@
 						if ( room[number].create === Users[socket.id].user ){
 							if ( room[number].user.length !== 0 ){
 								room[number].create = room[number].user[0] ;
-								io.sockets.in(number).emit('console',{console: "室長替換成 "+ room[number].user[0] , notify : true  }) ;
+								io.sockets.in(number).emit('console',{console: "Room admin is changed to "+ room[number].user[0] , notify : true  }) ;
 								clients[room[number].id[0]].emit('changeCreater',{});
 								resetRole(number);
 								showRole(number);
@@ -175,7 +175,7 @@
 						var index = room[number].id.indexOf(socket.id) ;
 						if ( index !== -1 ){
 							var user = room[number].user[index] ;
-							io.sockets.in(number).emit('console',{console:user+" 斷線，請等候回復。" , notify : true }) ;
+							io.sockets.in(number).emit('console',{console:user+" connection lost. Please wait..." , notify : true }) ;
 							if ( room[number].disconnectCount === room[number].user.length ){
 								delete room[number] ;
 								getRoomList();
@@ -207,7 +207,7 @@
 					if ( room[number].create === Users[socket.id].user ){
 						if ( room[number].user.length !== 0 ){
 							room[number].create = room[number].user[0] ;
-							io.sockets.in(number).emit('console',{console: "室長替換成 "+ room[number].user[0] , notify : true  }) ;
+							io.sockets.in(number).emit('console',{console: "Room admin is changed to "+ room[number].user[0] , notify : true  }) ;
 							clients[room[number].id[0]].emit('changeCreater',{});
 							resetRole(number);
 							showRole(number);
@@ -247,7 +247,7 @@
 				if ( room[number] !== undefined ){ 
 					var index = room[number].role.indexOf(oldRole) ;
 					room[number].role[index] = newRole ;
-					io.sockets.in(number).emit('console',{console:"室長將 " + oldRole + " 替換成 " + newRole , notify : true }) ;
+					io.sockets.in(number).emit('console',{console:"Room admin changed " + oldRole + " to " + newRole , notify : true }) ;
 
 					showRole(number,oldRole);
 				}
@@ -277,7 +277,7 @@
 					if ( result === true ){
 						room[number].restartVote ++ ;
 						if ( room[number].restartVote >= Math.ceil(room[number].user.length / 2) ){
-							io.sockets.in(number).emit('console',{console:"投票過半，回到房間。", notify : true}) ;
+							io.sockets.in(number).emit('console',{console:"Most player agreed. Back to the room", notify : true}) ;
 							while ( room[number].disUser.length > 0 ){
 								var index = room[number].id.indexOf(room[number].disUser[0]) ;
 								if ( index !== -1 ){
@@ -288,7 +288,7 @@
 									io.sockets.in(number).emit("leave",{status:"success",users:room[number].user,"user":oldUser,number:number});
 									if ( oldUser === room[number].create ){
 										room[number].create = room[number].user[0] ;
-										io.sockets.in(number).emit('console',{console: "室長替換成 "+ room[number].user[0] , notify : true  }) ;
+										io.sockets.in(number).emit('console',{console: "Room admin is changed to "+ room[number].user[0] , notify : true  }) ;
 										clients[room[number].id[0]].emit('changeCreater',{});
 										resetRole(number);
 										showRole(number);
@@ -329,10 +329,10 @@
 			if ( room[number] !== undefined ){
 				if ( room[number].god === false && godSet === true ){
 					room[number].god = true ;
-					io.sockets.in(number).emit('console',{console:"室長開啟湖中女神。", notify : true}) ;
+					io.sockets.in(number).emit('console',{console:"Room admin unlocked Lady of the Lake。", notify : true}) ;
 				} else if ( room[number].god === true && godSet === false ){
 					room[number].god = false ;
-					io.sockets.in(number).emit('console',{console:"室長關閉湖中女神。", notify : true}) ;
+					io.sockets.in(number).emit('console',{console:"Room admin locked Lady of the Lake。", notify : true}) ;
 				}
 			}
 		})
@@ -365,7 +365,7 @@
 			room[number].godNumber = 0 ;
 			room[number].start = false ;
 			room[number].role = bgamount[room[number].user.length];
-			io.sockets.in(number).emit("console",{console:"回到房間"});
+			io.sockets.in(number).emit("console",{console:"Back to the room"});
 			io.sockets.in(number).emit("restart",{status:"success",users:room[number].user,number:number});
 			showRole(number);
 		});
@@ -377,7 +377,7 @@
 					socket.emit("start",{status:"fail"}) ;
 				} else {
 					if ( room[number].user.length < 5 ){
-						io.sockets.in(number).emit('console',{console:"人數需要五個人以上。"}) ;
+						io.sockets.in(number).emit('console',{console:"At least five players are needed"}) ;
 					} else {
 						room[number].start = true ;
 						for ( var i = 0 ; i < room[number].role.length ; i ++ ){
@@ -387,8 +387,8 @@
 						var u = room[number].user ;
 						var newId = [] ;
 						var newU = [] ;
-						var maxNum = room[number].user.length - 1 ;  
-						var minNum = 0;  
+						var maxNum = room[number].user.length - 1 ;
+						var minNum = 0;
 						while ( maxNum >= 0 ){
 							var n = Math.floor(Math.random() * (maxNum - minNum + 1) + minNum);
 							newId.push(id[n]);
@@ -404,8 +404,8 @@
 						room[number].c = [] ;
 						var a = room[number].role.slice() ;
 						room[number].amount = amountList[room[number].user.length] ;
-						var maxNum = room[number].user.length - 1 ;  
-						var minNum = 0;  
+						var maxNum = room[number].user.length - 1 ;
+						var minNum = 0;
 						while ( maxNum >= 0 ){
 							var n = Math.floor(Math.random() * (maxNum - minNum + 1) + minNum);
 							room[number].c.push(a[n]) ;
@@ -416,37 +416,37 @@
 						var bArray2 = [] ;
 						var mArray = [] ;
 						for ( var i = 0 ; i < room[number].c.length ; i ++ ){
-							if ( room[number].c[i] === "刺客" || room[number].c[i] === "壞人"  ||  room[number].c[i] === "莫甘娜" ){
+							if ( room[number].c[i] === "Assassin" || room[number].c[i] === "Evil"  ||  room[number].c[i] === "Mogana" ){
 								bArray.push(i) ;
 								bArray2.push(i) ;
-							} else if ( room[number].c[i] === "奧伯倫" ){
+							} else if ( room[number].c[i] === "Oberon" ){
 								bArray.push(i) ;
-							} else if ( room[number].c[i] === "莫德雷德") {
+							} else if ( room[number].c[i] === "Modred") {
 								bArray2.push(i) ;
 							}
 						}
 						for ( var i = 0 ; i < room[number].c.length ; i ++ ){
-							if ( room[number].c[i] === "梅林" || room[number].c[i] === "莫甘娜" ){
+							if ( room[number].c[i] === "Merlin" || room[number].c[i] === "Mogana" ){
 								mArray.push(i) ;
 							}
 						}
-						room[number].godNumber = room[number].c.length - 1 ; 
+						room[number].godNumber = room[number].c.length - 1 ;
 						room[number].godArray.push(room[number].c.length - 1) ;
 						for ( var i = 0 ; i < room[number].c.length ; i ++ ){
 							clients[room[number].id[i]].emit("save",{id:room[number].id[i]});
-							if ( room[number].c[i] === "梅林" ) {
+							if ( room[number].c[i] === "Merlin" ) {
 								clients[room[number].id[i]].emit("start",{c:room[number].c[i],status:"success",b:bArray,role:room[number].role,index:i,user:room[number].user,voteDoneArray:room[number].voteDoneArray}) ;
-							} else if ( room[number].c[i] === "刺客" || room[number].c[i] === "壞人" || room[number].c[i] === "莫甘娜" || room[number].c[i] === "莫德雷德") {
+							} else if ( room[number].c[i] === "Assassin" || room[number].c[i] === "Evil" || room[number].c[i] === "Mogana" || room[number].c[i] === "Modred") {
 								clients[room[number].id[i]].emit("start",{c:room[number].c[i],status:"success",b:bArray2,role:room[number].role,index:i,user:room[number].user,voteDoneArray:room[number].voteDoneArray}) ;
-							} else if ( room[number].c[i] === "派西維爾") {
+							} else if ( room[number].c[i] === "Paisville") {
 								clients[room[number].id[i]].emit("start",{c:room[number].c[i],status:"success",m:mArray,role:room[number].role,index:i,user:room[number].user,voteDoneArray:room[number].voteDoneArray}) ;
 							} else {
 								clients[room[number].id[i]].emit("start",{c:room[number].c[i],status:"success",role:room[number].role,index:i,user:room[number].user,voteDoneArray:room[number].voteDoneArray}) ;
 							}
 						}
-						io.sockets.in(number).emit('console',{console:"隊長是 " +room[number].user[room[number].cap]}) ;
+						io.sockets.in(number).emit('console',{console:"Captain is " +room[number].user[room[number].cap]}) ;
 						io.sockets.in(number).emit('status', {round:room[number].round,vote:room[number].vote,amount:room[number].amount[room[number].round-1],cap:room[number].user[room[number].cap],success:room[number].successAmount,fail:room[number].failAmount,godNumber:room[number].godNumber,godArray:room[number].godArray,capIndex:room[number].cap,missionArray:room[number].missionArray });
-						io.sockets.in(number).emit('console',{console:"隊長正在選擇隊員。"});
+						io.sockets.in(number).emit('console',{console:"Captain is selecting teammates."});
 						room[number].wait[room[number].cap] = "c" ;
 						clients[room[number].id[room[number].cap]].emit("caption",{amount:room[number].amount[room[number].round-1],users:room[number].user}) ;
 						getRoomList();
@@ -461,13 +461,13 @@
 				for ( var i = 0 ; i < room[number].user.length ; i ++ ){
 					room[number].wait[i] = "n" ;
 				}
-				var list = "隊員：" ;
+				var list = "Teammates：" ;
 				for ( var i = 0 ; i < data.users.length ; i ++ ){
 					list += room[number].user[data.users[i]] + " " ;
 					room[number].mission.push(data.users[i]) ;
 				} 
 				io.sockets.in(number).emit('chooseUser',{users:data.users}) ;
-				io.sockets.in(number).emit('console',{console:"隊長選擇好隊員了 請投票。"}) ;
+				io.sockets.in(number).emit('console',{console:"Teamates have been selected. Please vote."}) ;
 				io.sockets.in(number).emit('console',{console:list}) ;
 				for ( var i = 0 ; i < room[number].user.length ; i ++ ){
 					room[number].wait[i] = "v" ;
@@ -480,7 +480,7 @@
 			var choose = data.choose ;
 			if ( room[number] !== undefined ){
 				room[number].voteArray.push({id:socket.id,"user":user,"choose":choose});
-				io.sockets.in(number).emit('console',{console:user+" 已經投好票了。"}) ;
+				io.sockets.in(number).emit('console',{console:user+" voted。"}) ;
 				for ( var i = 0 ; i < room[number].id.length ; i ++ ){
 					if ( room[number].id[i] === socket.id ){
 						room[number].voteDoneArray.push(i);
@@ -501,7 +501,7 @@
 							io.sockets.in(number).emit('console',{console:room[number].voteArray[i].user+" 反對。"}) ;
 						}
 					}
-					io.sockets.in(number).emit('console',{console:"贊成："+y +"，反對："+n}) ;
+					io.sockets.in(number).emit('console',{console:"Aye："+y +"，Nay："+n}) ;
 					var v = [] ;
 					for ( var i = 0 ; i < room[number].id.length  ; i ++ ){
 						for ( var j = 0 ; j < room[number].voteArray.length  ; j ++ ){
@@ -514,7 +514,7 @@
 					io.sockets.in(number).emit('voteResult',{votes:v}) ;
 					if ( y > n ){
 						room[number].vote = 1 ;
-						io.sockets.in(number).emit('console',{console:"贊成過半！隊員正在出任務中。"}) ;
+						io.sockets.in(number).emit('console',{console:"Most player agreed！Mission started。"}) ;
 						for ( var i = 0 ; i < room[number].mission.length ; i ++ ){
 							clients[room[number].id[room[number].mission[i]]].emit("mission","mission") ;
 							room[number].wait[room[number].mission[i]] = "m" ;
@@ -523,13 +523,13 @@
 					} else {
 						room[number].vote ++ ;
 						if ( room[number].vote > 5 ){
-							var msg = "投票超過五次！壞人獲勝！" ;
+							var msg = "Votes counted more than five. Evils win!" ;
 							io.sockets.in(number).emit('console',{console:msg}) ;
 							io.sockets.in(number).emit('gameoverMessage',msg);
 							clients[room[number].createId].emit("gameover",msg) ;
 						} else {
 							if ( room[number].vote === 5 ) {
-								io.sockets.in(number).emit('console',{console:"注意！這是最後一次投票！"}) ;
+								io.sockets.in(number).emit('console',{console:"Caution！This is the last proposal!"}) ;
 							}
 							room[number].voteDoneArray = [] ;
 							room[number].voteArray = [] ;
@@ -537,9 +537,9 @@
 							if ( room[number].cap >= room[number].user.length ){
 								room[number].cap = 0 ;
 							}
-							io.sockets.in(number).emit('console',{console:"贊成未過半！隊長替換成 " +room[number].user[room[number].cap]}) ;
+							io.sockets.in(number).emit('console',{console:"Most player disagreed！Captain is changed to " +room[number].user[room[number].cap]}) ;
 							io.sockets.in(number).emit('status', {round:room[number].round,vote:room[number].vote,amount:room[number].amount[room[number].round-1],cap:room[number].user[room[number].cap],success:room[number].successAmount,fail:room[number].failAmount,godNumber:room[number].godNumber,godArray:room[number].godArray,capIndex:room[number].cap,missionArray:room[number].missionArray  });
-							io.sockets.in(number).emit('console',{console:"隊長正在選擇隊員。"});
+							io.sockets.in(number).emit('console',{console:"Captain is selecting teammates."});
 							room[number].wait[room[number].cap] = "c" ;
 
 							io.sockets.in(number).emit('voteResult',{votes:v}) ;
@@ -558,7 +558,7 @@
 				if ( choose === "n" ){
 					room[number].missionResult ++  ;
 				}
-				io.sockets.in(number).emit('console',{console:user+" 已經出完任務了。"}) ;
+				io.sockets.in(number).emit('console',{console:user+" Mission finished。"}) ;
 				for ( var i = 0 ; i < room[number].id.length ; i ++ ){
 					if ( room[number].id[i] === socket.id ){
 						room[number].wait[i] = "n" ;
@@ -566,37 +566,37 @@
 					}
 				}
 				if ( room[number].missionAmount >= room[number].mission.length ){
-					io.sockets.in(number).emit('console',{console:"成功："+(room[number].missionAmount-room[number].missionResult)+"，失敗："+room[number].missionResult}) ;
+					io.sockets.in(number).emit('console',{console:"Succeeded："+(room[number].missionAmount-room[number].missionResult)+"，失敗："+room[number].missionResult}) ;
 					if ( room[number].round === 4 && room[number].user.length >= 7 ){
 						if ( room[number].missionResult < 2 ){
 							room[number].successAmount ++ ;
 							room[number].missionArray.push(true);
-							io.sockets.in(number).emit('console',{console:"任務成功。"}) ;
+							io.sockets.in(number).emit('console',{console:"Mission succeeded。"}) ;
 						} else {
 							room[number].failAmount ++ ;
 							room[number].missionArray.push(false);
-							io.sockets.in(number).emit('console',{console:"任務失敗。"}) ;
+							io.sockets.in(number).emit('console',{console:"Mission failed。"}) ;
 						}
 					} else {
 						if ( room[number].missionResult === 0 ){
 							room[number].successAmount ++ ;
 							room[number].missionArray.push(true);
-							io.sockets.in(number).emit('console',{console:"任務成功。"}) ;
+							io.sockets.in(number).emit('console',{console:"Mission succeeded。"}) ;
 						} else {
 							room[number].failAmount ++ ;
 							room[number].missionArray.push(false);
-							io.sockets.in(number).emit('console',{console:"任務失敗。"}) ;
+							io.sockets.in(number).emit('console',{console:"Mission failed。"}) ;
 						}
 					}
 					if ( room[number].successAmount >= 3 ){
-						io.sockets.in(number).emit('console',{console:"好人獲勝。"}) ;
-						io.sockets.in(number).emit('console',{console:"壞人現身，刺客選擇刺殺對象。"}) ;
+						io.sockets.in(number).emit('console',{console:"Justice wins。"}) ;
+						io.sockets.in(number).emit('console',{console:"Evils appears,. Assassin selects a player to kill."}) ;
 						var good = [] ;
 						var ass ;
 						for ( var i = 0 ; i < room[number].c.length ; i ++ ){
-							if ( room[number].c[i] === "壞人" || room[number].c[i] === "刺客" || room[number].c[i] === "莫甘娜"  || room[number].c[i] === "莫德雷德" ){
-								io.sockets.in(number).emit('console',{console:room[number].user[i]+" 身份："+room[number].c[i]}) ;
-								if ( room[number].c[i] === "刺客"  ){
+							if ( room[number].c[i] === "Evil" || room[number].c[i] === "Assassin" || room[number].c[i] === "Mogana"  || room[number].c[i] === "Modred" ){
+								io.sockets.in(number).emit('console',{console:room[number].user[i]+" role："+room[number].c[i]}) ;
+								if ( room[number].c[i] === "Assassin"  ){
 									ass = i ;
 								}
 							} else {
@@ -607,10 +607,10 @@
 						clients[room[number].id[ass]].emit("ass",{good:good}) ;
 						room[number].wait[ass] = "a" ;
 					} else if ( room[number].failAmount >= 3 ){
-						var msg = "三次任務失敗，壞人獲勝。" ;
+						var msg = "Failed missions reached its limit. Evils win." ;
 						io.sockets.in(number).emit('console',{console:msg}) ;
 						for ( var i = 0 ; i < room[number].c.length ; i ++ ){
-							io.sockets.in(number).emit('console',{console:room[number].user[i]+" 身份："+room[number].c[i]}) ;
+							io.sockets.in(number).emit('console',{console:room[number].user[i]+" role："+room[number].c[i]}) ;
 						}
 						io.sockets.in(number).emit('gameoverMessage',msg);
 						clients[room[number].createId].emit("gameover",msg) ;
@@ -629,7 +629,7 @@
 						room[number].missionAmount = 0 ;
 						if ( room[number].god === true && room[number].role.length >= 7 && room[number].round >= 3 && room[number].round <= 5 ){
 							room[number].wait[room[number].godNumber] = "g" ;
-							io.sockets.in(number).emit('console',{console:room[number].user[room[number].godNumber]+" 正在使用湖中女神。"});
+							io.sockets.in(number).emit('console',{console:room[number].user[room[number].godNumber]+" 正在使用Lady of the Lake。"});
 							var g = [] ;
 							for ( var i = 0 ; i < room[number].user.length ; i ++ ){
 								var index = room[number].godArray.indexOf(i) ;
@@ -639,9 +639,9 @@
 							}
 							clients[room[number].id[room[number].godNumber]].emit("god",{users:g}) ;
 						} else {
-							io.sockets.in(number).emit('console',{console:"隊長替換成 " +room[number].user[room[number].cap]}) ;
+							io.sockets.in(number).emit('console',{console:"Captain is changed to " +room[number].user[room[number].cap]}) ;
 							io.sockets.in(number).emit('status', {round:room[number].round,vote:room[number].vote,amount:room[number].amount[room[number].round-1],cap:room[number].user[room[number].cap],success:room[number].successAmount,fail:room[number].failAmount,godNumber:room[number].godNumber,godArray:room[number].godArray ,capIndex:room[number].cap,missionArray:room[number].missionArray });
-							io.sockets.in(number).emit('console',{console:"隊長正在選擇隊員。"});
+							io.sockets.in(number).emit('console',{console:"Captain is selecting teammates."});
 							room[number].wait[room[number].cap] = "c" ;
 							clients[room[number].id[room[number].cap]].emit("caption",{amount:room[number].amount[room[number].round-1],users:room[number].user}) ;
 						}
@@ -658,18 +658,18 @@
 				var newUser = room[number].user[newIndex] ;
 				var kind ;
 				room[number].wait[room[number].godNumber] = "n" ;
-				if ( room[number].c[newIndex] === "好人" || room[number].c[newIndex] === "梅林" || room[number].c[newIndex] === "派西維爾" ){
+				if ( room[number].c[newIndex] === "Justice" || room[number].c[newIndex] === "Merlin" || room[number].c[newIndex] === "Paisville" ){
 					kind = "good"
-				} else if ( room[number].c[newIndex] === "莫甘娜" || room[number].c[newIndex] === "莫德雷德" || room[number].c[newIndex] === "奧伯倫" || room[number].c[newIndex] === "壞人" || room[number].c[newIndex] === "刺客" ){
+				} else if ( room[number].c[newIndex] === "Mogana" || room[number].c[newIndex] === "Modred" || room[number].c[newIndex] === "Oberon" || room[number].c[newIndex] === "Evil" || room[number].c[newIndex] === "Assassin" ){
 					kind = "bad" ;
 				}
 				clients[room[number].id[oldIndex]].emit("godResult",{kind:kind,index:newIndex}) ;
 				room[number].godNumber = newIndex ;
 				room[number].godArray.push(newIndex) ;
-				io.sockets.in(number).emit('console',{console:room[number].user[oldIndex] + " 查看了 " + room[number].user[newIndex] + " 的陣營。"});
-				io.sockets.in(number).emit('console',{console:"隊長替換成 " +room[number].user[room[number].cap]}) ;
+				io.sockets.in(number).emit('console',{console:room[number].user[oldIndex] + " verified " + room[number].user[newIndex] + " ’s faction"});
+				io.sockets.in(number).emit('console',{console:"Captain is changed to " +room[number].user[room[number].cap]}) ;
 				io.sockets.in(number).emit('status', {round:room[number].round,vote:room[number].vote,amount:room[number].amount[room[number].round-1],cap:room[number].user[room[number].cap],success:room[number].successAmount,fail:room[number].failAmount,godNumber:room[number].godNumber,godArray:room[number].godArray,capIndex:room[number].cap ,missionArray:room[number].missionArray });
-				io.sockets.in(number).emit('console',{console:"隊長正在選擇隊員。"});
+				io.sockets.in(number).emit('console',{console:"Captain is selecting teammates."});
 				room[number].wait[room[number].cap] = "c" ;
 				clients[room[number].id[room[number].cap]].emit("caption",{amount:room[number].amount[room[number].round-1],users:room[number].user}) ;
 			}
@@ -679,21 +679,21 @@
 			var index = data.index ;
 			var number = data.number ;
 			if ( room[number] !== undefined ){
-				var msg = "刺客選擇刺殺 "+room[number].user[index] ;
-				io.sockets.in(number).emit('console',{console:"刺客選擇刺殺 "+msg}) ;
-				if ( room[number].c[index] === "梅林" ){
-					var m1 = "刺中梅林！壞人獲勝！" ;
+				var msg = "Assassin killed "+room[number].user[index] ;
+				io.sockets.in(number).emit('console',{console:"Assassin assassinated "+msg}) ;
+				if ( room[number].c[index] === "Merlin" ){
+					var m1 = "Merlin was killed! Evil wins!" ;
 					msg += "<br>" + m1 ;
 					io.sockets.in(number).emit('console',{console:m1}) ;
 				} else {
-					var m2 = "刺殺失敗！好人獲勝！" ;
+					var m2 = "Assassination failed. Justice wins！" ;
 					msg += "<br>" + m2 ;
 					io.sockets.in(number).emit('console',{console:m2}) ;
 				}
 				io.sockets.in(number).emit('gameoverMessage',msg);
 				for ( var i = 0 ; i < room[number].c.length ; i ++ ){
-					if (room[number].c[i] !== "壞人" || room[number].c[i] !== "刺客" )
-						io.sockets.in(number).emit('console',{console:room[number].user[i]+" 身份："+room[number].c[i]}) ;
+					if (room[number].c[i] !== "Evil" || room[number].c[i] !== "Assassin" )
+						io.sockets.in(number).emit('console',{console:room[number].user[i]+" role："+room[number].c[i]}) ;
 				}
 				while ( room[number].disUser.length > 0 ){
 					var index = room[number].id.indexOf(room[number].disUser[0]) ;
@@ -705,12 +705,12 @@
 						io.sockets.in(number).emit("leave",{status:"success",users:room[number].user,"user":oldUser,number:number});
 						if ( oldUser === room[number].create ){
 							room[number].create = room[number].user[0] ;
-							io.sockets.in(number).emit('console',{console: "室長替換成 "+ room[number].user[0] , notify : true  }) ;
+							io.sockets.in(number).emit('console',{console: "Room admin is changed to "+ room[number].user[0] , notify : true  }) ;
 							clients[room[number].id[0]].emit('changeCreater',{});
 							resetRole(number);
 							showRole(number);
 						}
-					} 
+					}
 					room[number].disUser.splice(0,1) ;
 				}
 				clients[room[number].createId].emit("gameover",msg) ;
@@ -730,7 +730,7 @@
 						var disIndex = room[number].disUser.indexOf(socketId)  ;
 						if ( disIndex !== -1 ){
 							room[number].disUser.splice(disIndex,1);
-						} 
+						}
 						var user = Users[socketId].user ;
 						var index ;
 						for ( var i = 0 ; i < room[number].id.length ; i ++ ){
@@ -757,25 +757,25 @@
 						var bArray2 = [] ;
 						var mArray = [] ;
 						for ( var i = 0 ; i < room[number].c.length ; i ++ ){
-							if ( room[number].c[i] === "刺客" || room[number].c[i] === "壞人"  ||  room[number].c[i] === "莫甘娜" ){
+							if ( room[number].c[i] === "Assassin" || room[number].c[i] === "Evil"  ||  room[number].c[i] === "Mogana" ){
 								bArray.push(i) ;
 								bArray2.push(i) ;
-							} else if ( room[number].c[i] === "奧伯倫" ){
+							} else if ( room[number].c[i] === "Oberon" ){
 								bArray.push(i) ;
-							} else if ( room[number].c[i] === "莫德雷德") {
+							} else if ( room[number].c[i] === "Modred") {
 								bArray2.push(i) ;
 							}
 						}
 						for ( var i = 0 ; i < room[number].c.length ; i ++ ){
-							if ( room[number].c[i] === "梅林" || room[number].c[i] === "莫甘娜" ){
+							if ( room[number].c[i] === "Merlin" || room[number].c[i] === "Mogana" ){
 								mArray.push(i) ;
 							}
 						}
-						if ( room[number].c[index] === "梅林" ) {
+						if ( room[number].c[index] === "Merlin" ) {
 							socket.emit("start",{c:room[number].c[index],status:"success",b:bArray,role:room[number].role,index:index,user:room[number].user,voteDoneArray:room[number].voteDoneArray}) ;
-						} else if ( room[number].c[index] === "刺客" || room[number].c[index] === "壞人" || room[number].c[index] === "莫甘娜" || room[number].c[index] === "莫德雷德") {
+						} else if ( room[number].c[index] === "Assassin" || room[number].c[index] === "Evil" || room[number].c[index] === "Mogana" || room[number].c[index] === "Modred") {
 							socket.emit("start",{c:room[number].c[index],status:"success",b:bArray2,role:room[number].role,index:index,user:room[number].user,voteDoneArray:room[number].voteDoneArray}) ;
-						} else if ( room[number].c[index] === "派西維爾") {
+						} else if ( room[number].c[index] === "Paisville") {
 							socket.emit("start",{c:room[number].c[index],status:"success",m:mArray,role:room[number].role,index:index,user:room[number].user,voteDoneArray:room[number].voteDoneArray}) ;
 						} else {
 							socket.emit("start",{c:room[number].c[index],status:"success",role:room[number].role,index:index,user:room[number].user,voteDoneArray:room[number].voteDoneArray}) ;
@@ -785,7 +785,7 @@
 						if ( room[number].wait[index] === "c" ){
 							socket.emit("caption",{amount:room[number].amount[room[number].round-1],users:room[number].user}) ;
 						} else if (room[number].wait[index] === "v"){
-							socket.emit('chooseUser',{users:room[number].mission}) ;	
+							socket.emit('chooseUser',{users:room[number].mission}) ;
 						} else if (room[number].wait[index] === "m"){
 							socket.emit('chooseUser',{users:room[number].mission,vote:"no"}) ;
 							socket.emit("mission","mission") ;
@@ -793,7 +793,7 @@
 							var good = [] ;
 							var ass ;
 							for ( var i = 0 ; i < room[number].c.length ; i ++ ){
-								if ( room[number].c[i] === "壞人" || room[number].c[i] === "刺客" || room[number].c[i] === "莫甘娜"  || room[number].c[i] === "莫德雷德" ){
+								if ( room[number].c[i] === "Evil" || room[number].c[i] === "Assassin" || room[number].c[i] === "Mogana"  || room[number].c[i] === "Modred" ){
 									;
 								} else {
 									good.push({index:i,user:room[number].user[i]});
@@ -852,8 +852,8 @@
 	}
 
 	var makeRoom = function(creater){
-		var maxNum = 2000;  
-		var minNum = 6000;  
+		var maxNum = 2000;
+		var minNum = 6000;
 		var number = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;
 		while ( room.number !== undefined ){
 			number = Math.floor(Math.random() * (maxNum - minNum + 1)) + minNum;

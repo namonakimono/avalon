@@ -10,11 +10,11 @@
 	var create = false ;
 	var creater = false ;
 	var godSet = false ;
-	var goodRoleList2 =  ["派西維爾","好人"] ;
-	var goodRoleList = ["派西維爾","好人"] ;
-	var badRoleList = ["莫甘娜","莫德雷德","奧伯倫","壞人"] ;
-	var badRoleList2 = ["莫甘娜","莫德雷德","奧伯倫","壞人"] ;
-	var imageList = ["board_5.jpg","board_6.jpg","board_7.jpg","board_8.jpg","board_9.jpg","board_10.jpg","mission_token.png","vote_token.png","fail_token.png","success_token.png","梅林.jpg","好人.jpg","壞人.jpg","刺客.jpg","派西維爾.jpg","莫甘娜.jpg","莫德雷德.jpg","奧伯倫.jpg","yes.jpg","no.jpg","caption.jpg","mission.jpg","god.png","vote_token2.jpg","unknown.jpg","good.jpg","bad.jpg","camp.jpg"] ;
+	var goodRoleList2 =  ["Paisville","Justice"] ;
+	var goodRoleList = ["Paisville","Justice"] ;
+	var badRoleList = ["Mogana","Modred","Oberon","Evil"] ;
+	var badRoleList2 = ["Mogana","Modred","Oberon","Evil"] ;
+	var imageList = ["board_5.jpg","board_6.jpg","board_7.jpg","board_8.jpg","board_9.jpg","board_10.jpg","mission_token.png","vote_token.png","fail_token.png","success_token.png","Merlin.jpg","Justice.jpg","Evil.jpg","Assassin.jpg","Paisville.jpg","Mogana.jpg","Modred.jpg","Oberon.jpg","yes.jpg","no.jpg","caption.jpg","mission.jpg","god.png","vote_token2.jpg","unknown.jpg","good.jpg","bad.jpg","camp.jpg"] ;
 	var canvasMap = {} ;
 	var loadImageProgress = 0 ;
 	var imgMap = {} ;
@@ -27,8 +27,8 @@
 	var roleList = [] ;
 	var nowRound = 1 ;
 	var nowVote = 1 ;
-	var isJoining = false ; 
-	var isCreating = false ; 
+	var isJoining = false ;
+	var isCreating = false ;
 	var missionArray = [] ;
 
 	var hide = self.hide = function(el){
@@ -49,7 +49,7 @@
 
 	socket.on("recover",function (data){
 		if ( data.status === "fail" ){
-			alert("回復失敗！") ;
+			alert("Failed to send your reply!") ;
 		} else {
 			hide(document.getElementById("loginPage"));
 			hide(document.getElementById("roomPage"));
@@ -57,7 +57,7 @@
 			var user = data.user ;
 			userName = user ;
 			roomNumber = number ;
-			document.getElementById("numberDiv").innerHTML = "房號 ： " + roomNumber ;
+			document.getElementById("numberDiv").innerHTML = "Room number ： " + roomNumber ;
 		}
 	})
 
@@ -65,7 +65,7 @@
 		if ( localStorage.socketId !== undefined ){
 			socket.emit("recover",{id:localStorage.socketId });
 		} else {
-			alert("沒有紀錄！") ;
+			alert("No records yet！") ;
 		}
 	})
 	/*
@@ -87,10 +87,10 @@
 
 	document.getElementById("loginImageButton").addEventListener("click",function(){
 		if ( document.getElementById("imageInput").value === "" ){
-			alert("請輸入網址！") ;
+			alert("URL of the image") ;
 		} else {
 			if (stripHTML(document.getElementById("imageInput").value) === true ){
-				alert("請輸入合法字元！")
+				alert("Please use simple characters.")
 			} else {
 				hide(document.getElementById("loginPage"));
 				show(document.getElementById("roomPage"));
@@ -103,12 +103,12 @@
 
 	document.getElementById("loginButton").addEventListener("click",function(){
 		if ( document.getElementById("nameInput").value === "" ){
-			alert("請輸入暱稱！") ;
+			alert("Nick name") ;
 		} else if (  document.getElementById("nameInput").value.length > 6 ){
-			alert("最長只能六個字！")
+			alert("The nick name should be less than six characters.")
 		} else {
 			if (stripHTML(document.getElementById("nameInput").value) === true ){
-				alert("請輸入合法字元！")
+				alert("Please use simple characters.")
 			} else {
 				hide(document.getElementById("loginPage"));
 				show(document.getElementById("roomPage"));
@@ -138,10 +138,10 @@
 			div.style.borderRadius = "5px" ;
 			var number = document.createElement("span") ;
 			var name = document.createElement("div") ;
-			name.innerHTML = "室長：" + roomList[i].creater ;
+			name.innerHTML = "Room admin：" + roomList[i].creater ;
 			var people = document.createElement("div") ;
-			people.innerHTML = "人數："+roomList[i].people + "/10";
-			number.innerHTML = "房號："+roomList[i].number ;
+			people.innerHTML = "Players："+roomList[i].people + "/10";
+			number.innerHTML = "Room number："+roomList[i].number ;
 			div.appendChild(name);
 			div.appendChild(number);
 			if ( !roomList[i].start ){
@@ -153,7 +153,7 @@
 				password.id = "password" + roomList[i].number ;
 				if ( roomList[i].password === true  ){
 					password.style.float = "right" ;
-					password.placeholder = "請輸入密碼" ;
+					password.placeholder = "Please input password" ;
 					div.appendChild(password);
 				}
 				button.setAttribute("data-number",roomList[i].number);
@@ -207,12 +207,12 @@
 		}
 	});
 	socket.on("godResult",function (data){
-		notificationUser("女神結果出來了！");
+		notificationUser("Results of using the ability 'Lady of the Lake'");
 		document.getElementById("godArea").innerHTML = "" ;
 		var kind = data.kind ;
 		var index = data.index ;
 		document.querySelectorAll(".campDiv")[index].innerHTML = "" ;
-		var campImg ;		
+		var campImg ;
 		if ( kind === "good" ){
 			campImg = imgMap["good.jpg"].cloneNode(true) ;
 		} else if ( kind === "bad" ){
@@ -222,7 +222,7 @@
 		document.querySelectorAll(".campDiv")[index].appendChild(campImg) ;
 	})
 	socket.on("changeCreater",function (data){
-		notificationUser("室長更換！");
+		notificationUser("Room admin changed！");
 		create = true ;
 		creater = true ;
 	})
@@ -233,16 +233,16 @@
 	})
 	socket.on("join",function (data){
 		if ( data.status === "fail" ){
-			alert("加入失敗！");
+			alert("Connection failed");
 		} else {
 			var users = data.users ;
 			userAmount = users.length ;
 			var number = data.number ;
 			roomNumber = number ;
 			socket.emit("resetRole",{number:number}) ;
-			document.getElementById("numberDiv").innerHTML = "房號 ： " + roomNumber ;
+			document.getElementById("numberDiv").innerHTML = "Room number ： " + roomNumber ;
 			var leaveButton = document.createElement("button") ;
-			leaveButton.innerHTML = "離開房間" ;
+			leaveButton.innerHTML = "Leave room" ;
 			leaveButton.className = "w3-btn w3-round w3-red" ;
 			leaveButton.id = "leaveButton" ;
 			leaveButton.addEventListener("click",function(){
@@ -256,7 +256,7 @@
 			document.getElementById("numberDiv").appendChild(leaveButton);
 			if ( create === true ){
 				var button = document.createElement("button") ;
-				button.innerHTML = "開始" ;
+				button.innerHTML = "Start" ;
 				button.className = "w3-btn w3-round w3-indigo" ;
 				button.id = "startButton" ;
 				button.addEventListener("click",function(){
@@ -264,12 +264,12 @@
 				})
 				document.getElementById("numberDiv").appendChild(button);
 				var god = document.createElement("button") ;
-				god.innerHTML = "湖中女神" ;
+				god.innerHTML = "Lady of the Lake" ;
 				god.className = "w3-btn w3-round w3-indigo" ;
 				god.id = "godButton" ;
 				god.addEventListener("click",function(){
 					if ( users.length < 7 ){
-						alert("需要七人以上才能使用湖中女神。") ;
+						alert("More than 7 players are required for unlocking Lady of the Lake") ;
 					} else {
 						if ( godSet === true ){
 							godSet = false ;
@@ -285,8 +285,8 @@
 			show(document.getElementById("gamePage"));
 			var user = data.user ;
 			var d = document.createElement("div") ;
-			d.innerHTML = user +" 加入房間" ;
-			notificationUser(user +" 加入房間");
+			d.innerHTML = user +" join" ;
+			notificationUser(user +" join");
 			document.getElementById("consoleArea").appendChild(d) ;
 
 			if ( data.isStart === false || document.getElementById("playerDiv").innerHTML === "" ){
@@ -314,9 +314,9 @@
 		var users = data.users ;
 		var user = data.user ;
 		userAmount = users.length ;
-		notificationUser(user + "離開房間了！");
+		notificationUser(user + "Left the room.");
 		var d = document.createElement("div") ;
-		d.innerHTML = user +" 離開房間" ;
+		d.innerHTML = user +" Leave room" ;
 		document.getElementById("consoleArea").appendChild(d) ;
 		document.getElementById("playerDiv").innerHTML = "" ;
 		for ( var i = 0 ; i < users.length ; i ++ ){
@@ -338,19 +338,19 @@
 		socket.emit('create', { user : userName , password : document.getElementById("passwordCreate").value });
 		socket.on('create', function (data) {
 			if ( data.status === "success" ){
-				notificationUser("房間創建完成！");
+				notificationUser("The room is created successfully.");
 				create = true ;
 				creater = true ;
 				roomNumber = data.number ;
-				document.getElementById("numberDiv").innerHTML = "房號 ： " + roomNumber ;
+				document.getElementById("numberDiv").innerHTML = "Room number ： " + roomNumber ;
 				hide(document.getElementById("roomPage"));
 				show(document.getElementById("gamePage"));
 
-				socket.emit("role",{ role : "梅林" , number : roomNumber } );
-				socket.emit("role",{ role : "好人" , number : roomNumber } );
-				socket.emit("role",{ role : "好人" , number : roomNumber });
-				socket.emit("role",{ role : "刺客" , number : roomNumber });
-				socket.emit("role",{ role : "壞人" , number : roomNumber });
+				socket.emit("role",{ role : "Merlin" , number : roomNumber } );
+				socket.emit("role",{ role : "Justice" , number : roomNumber } );
+				socket.emit("role",{ role : "Justice" , number : roomNumber });
+				socket.emit("role",{ role : "Assassin" , number : roomNumber });
+				socket.emit("role",{ role : "Evil" , number : roomNumber });
 				drawBoard();
 				isCreating = false ;
 			} 
@@ -365,9 +365,9 @@
 		var number = data.number ;
 		roomNumber = number ;
 		socket.emit("resetRole",{number:number}) ;
-		document.getElementById("numberDiv").innerHTML = "房號 ： " + roomNumber ;
+		document.getElementById("numberDiv").innerHTML = "Room number ： " + roomNumber ;
 		var leaveButton = document.createElement("button") ;
-		leaveButton.innerHTML = "離開房間" ;
+		leaveButton.innerHTML = "Leave the room" ;
 		leaveButton.className = "w3-btn w3-round w3-red" ;
 		leaveButton.id = "leaveButton" ;
 		leaveButton.addEventListener("click",function(){
@@ -381,7 +381,7 @@
 		document.getElementById("numberDiv").appendChild(leaveButton);
 		if ( create === true ){
 			var button = document.createElement("button") ;
-			button.innerHTML = "開始" ;
+			button.innerHTML = "Start" ;
 			button.className = "w3-btn w3-round w3-indigo" ;
 			button.id = "startButton" ;
 			button.addEventListener("click",function(){
@@ -389,7 +389,7 @@
 			})
 			document.getElementById("numberDiv").appendChild(button);
 			var god = document.createElement("button") ;
-			god.innerHTML = "湖中女神" ;
+			god.innerHTML = "Lady of the Lake" ;
 			god.className = "w3-btn w3-round w3-indigo" ;
 			god.id = "godButton" ;
 			god.addEventListener("click",function(){
@@ -406,7 +406,7 @@
 		show(document.getElementById("gamePage"));
 	})
 	socket.on("gameoverMessage" ,function (data){
-		notificationUser( "遊戲結束！");
+		notificationUser( "Game finished!");
 		document.getElementById("noticeArea").innerHTML = data ;
 	});
 	socket.on("restartResult" ,function (data){
@@ -421,7 +421,7 @@
 			'<div id="restartArea" class="w3-container"></div>' ;
 			socket.emit("restart",{number:roomNumber}) ;
 		} else {	
-			document.getElementById("restartArea").innerHTML = "贊成未過半，重啟失敗！" ;
+			document.getElementById("restartArea").innerHTML = "Not enough votes. Failed to restart" ;
 		}
 	});
 	socket.on("gameover" ,function (data){
@@ -457,7 +457,7 @@
 		}
 		for ( var i = 0 ; i < data.role.length ; i ++ ){
 			var div = document.createElement("li") ;
-			if ( data.role[i] === "好人" || data.role[i] === "梅林" || data.role[i] === "派西維爾") {
+			if ( data.role[i] === "Justice" || data.role[i] === "Merlin" || data.role[i] === "Paisville") {
 				div.className = "w3-blue" ;
 			} else {
 				div.className = "w3-red" ;
@@ -476,18 +476,18 @@
 				roleContentDiv.style.width = "45vw" ;
 				roleContentDiv.style.backgroundColor = "transparent" ;
 				roleContentDiv.classList.add("w3-dropdown-content");
-				if ( getRoleKind(data.role[i]) === "good" && data.role[i] !== "梅林" ){
+				if ( getRoleKind(data.role[i]) === "good" && data.role[i] !== "Merlin" ){
 					for ( var j = 0 ; j < goodRoleList.length ; j ++ ){
 						if ( goodRoleList[j] !==  data.role[i]) {
 							var role = setRole("good",j,roleDiv) ;
 							roleContentDiv.appendChild(role) ;
 						}
 					}
-				} else if ( getRoleKind(data.role[i]) === "bad" && data.role[i] !== "刺客" ){
+				} else if ( getRoleKind(data.role[i]) === "bad" && data.role[i] !== "Assassin" ){
 					for ( var j = 0 ; j < badRoleList.length ; j ++ ){
 						if ( badRoleList[j] !== data.role[i] ){
 							var role = setRole("bad",j,roleDiv) ;
-							if ( data.role.length === 5 ){ 
+							if ( data.role.length === 5 ){
 								roleContentDiv.style.right = "0" ;
 							} else if ( data.role.length === 6 ){
 								;
@@ -502,7 +502,7 @@
 							} else if ( data.role.length === 10 ){
 								if ( i === 8 || i === 9 ){
 									roleContentDiv.style.right = "0" ;
-								} 
+								}
 							}
 							roleContentDiv.appendChild(role) ;
 						}
@@ -531,7 +531,7 @@
 				socket.emit("role",{
 					oldRole : roleDiv.getAttribute("data-role") ,
 					newRole : goodRoleList[index] ,
-					number : roomNumber 
+					number : roomNumber
 				})
 				goodRoleList.splice(index,1);
 			})
@@ -540,20 +540,19 @@
 				socket.emit("role",{
 					oldRole : roleDiv.getAttribute("data-role") ,
 					newRole : badRoleList[index] ,
-					number : roomNumber 
+					number : roomNumber
 				})
 				badRoleList.splice(index,1);
 			})
 		}
-		
 
 		return role ;
 	}
 
 	var getRoleKind = function(src){
-		if ( src === "好人" || src === "梅林" || src === "派西維爾" ){
+		if ( src === "Justice" || src === "Merlin" || src === "Paisville" ){
 			return "good" ;
-		} else if ( src === "莫甘娜" || src === "莫德雷德" || src === "奧伯倫" || src === "壞人" || src === "刺客" ){
+		} else if ( src === "Mogana" || src === "Modred" || src === "Oberon" || src === "Evil" || src === "Assassin" ){
 			return "bad" ;
 		}
 	};
@@ -564,12 +563,12 @@
 		text.innerHTML = data.user + " : " + data.text ;
 		document.getElementById("textArea").appendChild(text);
 		document.getElementById("textArea").scrollTop = document.getElementById("textArea").scrollHeight;
-	}); 
+	});
 	socket.on('messageFail', function (data) {
 		if ( data.status === 1 ){
-			alert("請輸入合法字元！") ;
+			alert("Please use simple characters.") ;
 		}
-	}); 
+	});
 	document.getElementById("textInput").addEventListener("keypress",function(e){
 		if(e.keyCode === 13){ 
 			document.getElementById("textButton").click();
@@ -577,7 +576,7 @@
 	})
 	document.getElementById("textButton").addEventListener("click",function(){
 		if (stripHTML(document.getElementById("textInput").value) === true) {
-			alert("請輸入合法字元！") ;
+			alert("Please use simple characters.") ;
 		} else {
 			socket.emit('message',{number:roomNumber,text:document.getElementById("textInput").value,user:userName}) ;
 			document.getElementById("textInput").value = "" ;
@@ -599,21 +598,21 @@
 		roleGuessContentDiv.classList.add("w3-dropdown-content");
 		var roleGuessImg1 = imgMap["unknown.jpg"].cloneNode(true) ;
 		roleGuessContentDiv.appendChild(roleGuessImg1);
-		var roleGuessImg2 = imgMap["梅林.jpg"].cloneNode(true) ;
+		var roleGuessImg2 = imgMap["Merlin.jpg"].cloneNode(true) ;
 		roleGuessContentDiv.appendChild(roleGuessImg2);
-		var roleGuessImg3 = imgMap["派西維爾.jpg"].cloneNode(true) ;
+		var roleGuessImg3 = imgMap["Paisville.jpg"].cloneNode(true) ;
 		roleGuessContentDiv.appendChild(roleGuessImg3);
-		var roleGuessImg4 = imgMap["好人.jpg"].cloneNode(true) ;
+		var roleGuessImg4 = imgMap["Justice.jpg"].cloneNode(true) ;
 		roleGuessContentDiv.appendChild(roleGuessImg4);
-		var roleGuessImg5 = imgMap["刺客.jpg"].cloneNode(true) ;
+		var roleGuessImg5 = imgMap["Assassin.jpg"].cloneNode(true) ;
 		roleGuessContentDiv.appendChild(roleGuessImg5);
-		var roleGuessImg6 = imgMap["莫甘娜.jpg"].cloneNode(true) ;
+		var roleGuessImg6 = imgMap["Mogana.jpg"].cloneNode(true) ;
 		roleGuessContentDiv.appendChild(roleGuessImg6);
-		var roleGuessImg7 = imgMap["莫德雷德.jpg"].cloneNode(true) ;
+		var roleGuessImg7 = imgMap["Modred.jpg"].cloneNode(true) ;
 		roleGuessContentDiv.appendChild(roleGuessImg7);
-		var roleGuessImg8 = imgMap["奧伯倫.jpg"].cloneNode(true) ;
+		var roleGuessImg8 = imgMap["Oberon.jpg"].cloneNode(true) ;
 		roleGuessContentDiv.appendChild(roleGuessImg8);
-		var roleGuessImg9 = imgMap["壞人.jpg"].cloneNode(true) ;
+		var roleGuessImg9 = imgMap["Evil.jpg"].cloneNode(true) ;
 		roleGuessContentDiv.appendChild(roleGuessImg9);
 		roleGuessImg1.onclick = roleGuessImg2.onclick = roleGuessImg3.onclick = roleGuessImg4.onclick = roleGuessImg5.onclick = roleGuessImg6.onclick = roleGuessImg7.onclick = roleGuessImg8.onclick = roleGuessImg9.onclick = function(){
 			roleGuessImg.src = this.src ;
@@ -634,7 +633,7 @@
 			gArray = [] ;
 			var user = data.user ;
 			var voteDoneArray = data.voteDoneArray ;
-			document.getElementById("numberDiv").innerHTML = "房號 ： " + roomNumber ;
+			document.getElementById("numberDiv").innerHTML = "Room number ： " + roomNumber ;
 			hide(document.getElementById("roomPage"));
 			show(document.getElementById("gamePage"));
 			document.getElementById("playerDiv").innerHTML = "" ;
@@ -653,27 +652,27 @@
 
 				if ( data.index === i ){
 					var role = imgMap[data.c+".jpg"].cloneNode(true) ;
-					role.classList.add("roleImg2") ;			
-					roleDiv.appendChild(role);	
+					role.classList.add("roleImg2") ;
+					roleDiv.appendChild(role);
 					roleDiv.classList.add("roleDiv");
 				} else {
-					if ( data.c === "派西維爾" ){
+					if ( data.c === "Paisville" ){
 						mArray = data.m ;
-						if ( mArray.indexOf(i) !== -1 ){		
-							var role = imgMap["梅林.jpg"].cloneNode(true) ;
-							role.classList.add("roleImg2") ;			
-							roleDiv.appendChild(role);	
+						if ( mArray.indexOf(i) !== -1 ){
+							var role = imgMap["Merlin.jpg"].cloneNode(true) ;
+							role.classList.add("roleImg2") ;
+							roleDiv.appendChild(role);
 							roleDiv.classList.add("roleDiv");
 						} else {
 							var role = imgMap["unknown.jpg"].cloneNode(true) ;
-							role.classList.add("roleImg2") ;			
-							roleDiv.appendChild(role);	
+							role.classList.add("roleImg2") ;
+							roleDiv.appendChild(role);
 							roleDiv.classList.add("roleDiv");
 						}
 					} else {
 						var role = imgMap["unknown.jpg"].cloneNode(true) ;
-						role.classList.add("roleImg2") ;			
-						roleDiv.appendChild(role);	
+						role.classList.add("roleImg2") ;
+						roleDiv.appendChild(role);
 						roleDiv.classList.add("roleDiv");
 					}
 				}
@@ -688,7 +687,7 @@
 				var roleGuessDiv = makeRoleGuess(i);
 				tokenTopDiv.appendChild(roleGuessDiv) ;
 				if ( i === data.index ){
-					if ( data.c=== "梅林" || data.c === "好人" || data.c=== "派西維爾"){
+					if ( data.c=== "Merlin" || data.c === "Justice" || data.c=== "Paisville"){
 						gb = "g" ;
 						var campDiv = document.createElement("div") ;
 						var campImg = imgMap["good.jpg"].cloneNode(true) ;
@@ -705,9 +704,9 @@
 						campDiv.appendChild(campImg) ;
 						tokenTopDiv.appendChild(campDiv) ;
 					}
-				} else if (data.c === "梅林" || (getRoleKind(data.c) === "bad" && data.c !== "奧伯倫") ){
+				} else if (data.c === "Merlin" || (getRoleKind(data.c) === "bad" && data.c !== "Oberon") ){
 					bArray = data.b ;
-					if ( bArray.indexOf(i) !== -1 ){						
+					if ( bArray.indexOf(i) !== -1 ){
 						var campDiv = document.createElement("div") ;
 						campDiv.classList.add("campDiv") ;
 						var campImg = imgMap["bad.jpg"].cloneNode(true) ;
@@ -768,7 +767,7 @@
 				player.appendChild(tokenDiv);
 				document.getElementById("playerDiv").appendChild(player);
 			}
-			addConsole("遊戲開始了！");
+			addConsole("Game started!");
 			hide(document.getElementById("startButton"));
 			create = false ;
 			setRoleList(data);
@@ -776,11 +775,11 @@
 		}
 	}
 	socket.on("start", function (data){
-		notificationUser("遊戲開始了！");
+		notificationUser("Game started!");
 		startGame(data);
 	})
 	socket.on("caption",function (data){
-		notificationUser("輪到你當隊長了！");
+		notificationUser("You become the captain.");
 		var users = data.users ;
 		var amount = data.amount ;
 		document.getElementById("chooseUserArea").innerHTML = "" ;
@@ -796,10 +795,10 @@
 
 		var button = document.createElement("button") ;
 		button.className = "w3-btn w3-round" ;
-		button.innerHTML = "送出" ;
+		button.innerHTML = "Send" ;
 	    button.addEventListener("click", function() {
 	    	if ( selector.getSelectedIndexes().length !== amount ) {
-				alert("人數不符！") ;
+				alert("Numbers of selected players (for the current mission) are incorrect!") ;
 			} else {
 				socket.emit("caption",{users:selector.getSelectedIndexes(),number:roomNumber}) ;
 				button.parentNode.removeChild(button);
@@ -815,7 +814,7 @@
 		addConsole(data.console);
 	});
 	socket.on("god",function (data){
-		notificationUser("輪到你使用女神！");
+		notificationUser("It is your turn to use Lady of the Lake！");
 		var users = data.users ;
 		document.getElementById("godArea").innerHTML = "" ;
 		var select = document.createElement("select")  ;
@@ -828,7 +827,7 @@
 		} 
 		document.getElementById("godArea").appendChild(select) ;
 		var button = document.createElement("button") ;
-		button.innerHTML = "查看" ;
+		button.innerHTML = "Verify" ;
 		button.className = "w3-button w3-round" ;
 		document.getElementById("godArea").appendChild(button);
 
@@ -838,10 +837,10 @@
 		})
 	});
 	socket.on("mission",function (data){
-		notificationUser("輪到你出任務了！");
+		notificationUser("It is your turn to have the mission！");
 		document.getElementById("missionArea").innerHTML = "" ;
 		var y = document.createElement("button") ;
-		y.innerHTML = "成功" ;
+		y.innerHTML = "Succeeded" ;
 		y.className = "w3-button w3-round" ;
 		document.getElementById("missionArea").appendChild(y) ;
 		y.addEventListener("click",function(){
@@ -850,7 +849,7 @@
 		});
 		if ( gb === "b" ){
 			var n = document.createElement("button") ;
-			n.innerHTML = "失敗" ;
+			n.innerHTML = "Failed" ;
 			n.className = "w3-button w3-round" ;
 			document.getElementById("missionArea").appendChild(n) ;
 			n.addEventListener("click",function(){
@@ -861,13 +860,13 @@
 	});
 	socket.on("voted",function (data){
 		var index = data.index ;
-		document.querySelectorAll(".vote_token2Div")[index].innerHTML = "" ; 
+		document.querySelectorAll(".vote_token2Div")[index].innerHTML = "" ;
 		var vote_token2Img = imgMap["vote_token2.jpg"].cloneNode(true) ;
 		vote_token2Img.classList.add("vote_token2Img");
 		document.querySelectorAll(".vote_token2Div")[index].appendChild(vote_token2Img) ;
 	});
 	socket.on("chooseUser",function (data){
-		notificationUser("輪到你投票！");
+		notificationUser("It is your turn to vote.");
 		var users = data.users ;
 		missionArray = users;			
 		var missionDivs = document.querySelectorAll(".mission-div");
@@ -903,9 +902,9 @@
 		*/
 		if ( data.vote === undefined ){
 			var y = document.createElement("button") ;
-			y.innerHTML = "贊成" ; 
+			y.innerHTML = "Aye" ; 
 			var n = document.createElement("button") ;
-			n.innerHTML = "反對" ;
+			n.innerHTML = "Nay" ;
 			y.className = n.className = "w3-button w3-round" ;
 			document.getElementById("chooseVoteArea").appendChild(y);
 			document.getElementById("chooseVoteArea").appendChild(n);
@@ -920,8 +919,8 @@
 		}
 	});
 	socket.on("voteResult",function (data){
-		notificationUser("投票結果出來了！");
-		var votes = data.votes ; 
+		notificationUser("Results of the vote came out");
+		var votes = data.votes ;
 		for ( var i = 0 ; i < document.querySelectorAll(".vote_token2Div").length ; i ++ ){
 			document.querySelectorAll(".vote_token2Div")[i].innerHTML = "" ;
 			var vote_token2Img ;
@@ -969,7 +968,7 @@
 			document.getElementById("noticeArea").innerHTML = "" ;
 		}
 		if ( parseInt(vote) === 5){
-			document.getElementById("noticeArea").innerHTML += "<br>注意！這是最後一輪投票！" ;
+			document.getElementById("noticeArea").innerHTML += "<br>Caution! Caution！This is the last proposal!" ;
 		}
 		
 		for ( var i = 0 ; i < document.querySelectorAll(".captionDiv").length ; i ++ ){
@@ -981,7 +980,7 @@
 		
 	});
 	socket.on("ass",function (data){
-		notificationUser("選擇暗殺對象！");
+		notificationUser("Select a player to assassinate!");
 		var good = data.good ;
 		document.getElementById("assArea").innerHTML = "" ;
 		var select = document.createElement("select")  ;
@@ -990,11 +989,11 @@
 			var option = document.createElement("option") ;
 			option.innerHTML = good[i].user ;
 			option.value = good[i].index ;
-			select.appendChild(option) ; 
-		} 
+			select.appendChild(option) ;
+		}
 		document.getElementById("assArea").appendChild(select) ;
 		var button = document.createElement("button") ;
-		button.innerHTML = "刺殺" ;
+		button.innerHTML = "Assassinate" ;
 		document.getElementById("assArea").appendChild(button);
 
 		button.addEventListener("click",function(){
@@ -1016,23 +1015,23 @@
 		var status = data.status ;
 		var user = data.user ; 
 		if ( status === "success" ){
-			document.getElementById("restartArea").innerHTML = user + "發起重新遊戲的投票，是否要回到房間？" ;
+			document.getElementById("restartArea").innerHTML = user + "Vote for a new game. Back to the room?" ;
 			var yesButton = document.createElement("button") ;
-			yesButton.innerHTML = "贊成" ;
+			yesButton.innerHTML = "Aye" ;
 			yesButton.addEventListener("click",function(){
 				socket.emit("restartVote",{number:roomNumber , user:userName , result : true });
 				document.getElementById("restartArea").innerHTML = "" ;
 			})
 			document.getElementById("restartArea").appendChild(yesButton) ;
 			var noButton = document.createElement("button") ;
-			noButton.innerHTML = "反對" ;
+			noButton.innerHTML = "Nay" ;
 			noButton.addEventListener("click",function(){
 				socket.emit("restartVote",{number:roomNumber , user:userName , result : false });
 				document.getElementById("restartArea").innerHTML = "" ;
 			})
 			document.getElementById("restartArea").appendChild(noButton) ;
 		} else {
-			alert("要求重啟失敗！") ;
+			alert("Failed to restart.") ;
 		}
 	})
 
