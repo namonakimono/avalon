@@ -1,0 +1,1 @@
+forever start  -l avalonLog.txt --append index.js
